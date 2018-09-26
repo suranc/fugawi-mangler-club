@@ -1,0 +1,68 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fugawi 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ytlnd
+  namespace: fugawi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ytlnd
+  template:
+    metadata:
+      labels:
+        app: ytlnd
+    spec:
+      containers:
+      - name: ytlnd
+        image: suranc/ytlnd:0.1
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ytlnd-service
+  namespace: fugawi
+  labels:
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: ytlnd
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ytlnd-ingress
+  namespace: fugawi
+spec:
+  rules:
+  - host: ytlnd.ari.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytlnd-service
+          servicePort: 80
+  - host: ytlnd.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytlnd-service
+          servicePort: 80
+  - host: lumberg.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytlnd-service
+          servicePort: 80
+          

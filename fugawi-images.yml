@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fugawi 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: images
+  namespace: fugawi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: images
+  template:
+    metadata:
+      labels:
+        app: images
+    spec:
+      containers:
+      - name: images
+        image: suranc/images:0.6
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: images-service
+  namespace: fugawi
+  labels:
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: images
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: images-ingress
+  namespace: fugawi
+spec:
+  rules:
+  - host: i.ari.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: images-service
+          servicePort: 80
+  - host: i.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: images-service
+          servicePort: 80

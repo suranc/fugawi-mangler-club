@@ -1,0 +1,67 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fugawi 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ytrnd
+  namespace: fugawi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ytrnd
+  template:
+    metadata:
+      labels:
+        app: ytrnd
+    spec:
+      containers:
+      - name: ytrnd
+        image: suranc/ytrnd:0.1
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ytrnd-service
+  namespace: fugawi
+  labels:
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: ytrnd
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ytrnd-ingress
+  namespace: fugawi
+spec:
+  rules:
+  - host: ytrnd.ari.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytrnd-service
+          servicePort: 80
+  - host: ytrnd.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytrnd-service
+          servicePort: 80
+  - host: tsr.mangler.club
+    http:
+      paths:
+      - backend:
+          serviceName: ytrnd-service
+          servicePort: 80
