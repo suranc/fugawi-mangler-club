@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: images
-        image: suranc/images:0.6
+        image: suranc/images:0.7
         ports:
         - containerPort: 80
 ---
