@@ -47,13 +47,13 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: ytlnd.mangler.club
+  - host: ytlnd.suran.rocks
     http:
       paths:
       - backend:
           serviceName: ytlnd-service
           servicePort: 80
-  - host: lumberg.mangler.club
+  - host: lumberg.suran.rocks
     http:
       paths:
       - backend:

@@ -47,7 +47,7 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: i.mangler.club
+  - host: i.suran.rocks
     http:
       paths:
       - backend:

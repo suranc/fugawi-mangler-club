@@ -47,13 +47,13 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: ytrnd.mangler.club
+  - host: ytrnd.suran.rocks
     http:
       paths:
       - backend:
           serviceName: ytrnd-service
           servicePort: 80
-  - host: tsr.mangler.club
+  - host: tsr.suran.rocks
     http:
       paths:
       - backend:
