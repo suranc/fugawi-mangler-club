@@ -47,12 +47,6 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: i.ari.mangler.club
-    http:
-      paths:
-      - backend:
-          serviceName: images-service
-          servicePort: 80
   - host: i.mangler.club
     http:
       paths:

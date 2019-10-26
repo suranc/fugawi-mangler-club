@@ -47,12 +47,6 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: ytlnd.ari.mangler.club
-    http:
-      paths:
-      - backend:
-          serviceName: ytlnd-service
-          servicePort: 80
   - host: ytlnd.mangler.club
     http:
       paths:
