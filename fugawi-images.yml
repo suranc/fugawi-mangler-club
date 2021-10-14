@@ -47,7 +47,7 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: i.suran.rocks
+  - host: i.poostuff.com
     http:
       paths:
       - backend:

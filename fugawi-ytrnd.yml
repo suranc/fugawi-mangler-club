@@ -47,13 +47,13 @@ metadata:
   namespace: fugawi
 spec:
   rules:
-  - host: ytrnd.suran.rocks
+  - host: ytrnd.poostuff.com
     http:
       paths:
       - backend:
           serviceName: ytrnd-service
           servicePort: 80
-  - host: tsr.suran.rocks
+  - host: tsr.poostuff.com
     http:
       paths:
       - backend:
