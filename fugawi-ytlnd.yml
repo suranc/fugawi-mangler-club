@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: fugawi 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ytlnd
@@ -40,23 +40,31 @@ spec:
   selector:
     app: ytlnd
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ytlnd-ingress
   namespace: fugawi
 spec:
   rules:
-  - host: ytlnd.poostuff.com
+  - host: ytlnd.mangler.cyou
     http:
       paths:
-      - backend:
-          serviceName: ytlnd-service
-          servicePort: 80
-  - host: lumberg.poostuff.com
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ytlnd-service
+            port:
+              number: 80
+  - host: lumberg.mangler.cyou
     http:
       paths:
-      - backend:
-          serviceName: ytlnd-service
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ytlnd-service
+            port:
+              number: 80
           
