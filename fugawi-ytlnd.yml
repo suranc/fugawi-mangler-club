@@ -45,6 +45,8 @@ kind: Ingress
 metadata:
   name: ytlnd-ingress
   namespace: fugawi
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - host: ytlnd.mangler.cyou
