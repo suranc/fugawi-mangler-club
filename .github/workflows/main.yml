@@ -1,0 +1,27 @@
+on: [push]
+
+jobs:
+  rebuild_manglerheap_job:
+    runs-on: ubuntu-latest
+    name: Rebuild ibmcloud k8s cluster and Redeploy mangler heap
+    steps:
+      # Build or rebuild the k8s cluster and install the nginx ingress controller.  Taking default of 'us-south' for region and 'mycluster-free' for cluster name
+      - name: Rebuild k8s cluster
+        id: rebuild-k8s
+        uses: suranc/build-free-ibmcloud-k8s-cluster@stub
+        with:
+          ibmcloud-apikey: ${{ secrets.IBMCLOUD_APIKEY }}
+      # Apply the deployment yamls to the cluster
+      - name: Deploy Fugawi Mangler Club
+        run: |
+          mkdir /root/.kube/config
+          echo "${{ steps.rebuild-k8s.outputs.kubeconfig }}" > /root/.kube/config
+          curl https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+          chmod +x /usr/local/bin/kubectl
+          kubectl apply -f .
+      # Update haproxy config on Proxy VM
+      - name: Update haproxy config on proxy VM
+        run: |
+          mkdir /root/.ssh/
+          echo "${{ secrets.PROXY_PRIVATE_SSH_KEY }}" > /root/.ssh/.id_rsa
+          ssh -i /root/.ssh/id_rsa -l root 144.126.246.248 "sed -i 's/server server1 .*/server server1 ${{ steps.rebuild-k8s.outputs.ingress-ip }}:${{ steps.rebuild-k8s.outputs.ingress-port }}/' /etc/haproxy/haproxy.cfg; systemctl restart haproxy"
