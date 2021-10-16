@@ -14,11 +14,10 @@ jobs:
       # Apply the deployment yamls to the cluster
       - name: Deploy Fugawi Mangler Club
         run: |
-          mkdir /root/.kube/config
-          echo "${{ steps.rebuild-k8s.outputs.kubeconfig }}" > /root/.kube/config
-          curl https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
-          chmod +x /usr/local/bin/kubectl
-          kubectl apply -f .
+          echo "${{ steps.rebuild-k8s.outputs.kubeconfig }}" > ~/.kube/config
+          curl https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o ~/kubectl
+          chmod +x ~/kubectl
+          ~/kubectl apply -f .
       # Update haproxy config on Proxy VM
       - name: Update haproxy config on proxy VM
         run: |
