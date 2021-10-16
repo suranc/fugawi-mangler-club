@@ -8,7 +8,7 @@ jobs:
       # Build or rebuild the k8s cluster and install the nginx ingress controller.  Taking default of 'us-south' for region and 'mycluster-free' for cluster name
       - name: Rebuild k8s cluster
         id: rebuild-k8s
-        uses: suranc/build-free-ibmcloud-k8s-cluster@stub
+        uses: suranc/build-free-ibmcloud-k8s-cluster
         with:
           ibmcloud-apikey: ${{ secrets.IBMCLOUD_APIKEY }}
       # Apply the deployment yamls to the cluster
@@ -18,7 +18,7 @@ jobs:
           echo "${{ steps.rebuild-k8s.outputs.kubeconfig }}" | base64 -d > ~/.kube/config
           wget https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
           chmod +x ./kubectl
-          #./kubectl apply -f .
+          ./kubectl apply -f .
       # Update haproxy config on Proxy VM
       - name: Update haproxy config on proxy VM
         run: |
