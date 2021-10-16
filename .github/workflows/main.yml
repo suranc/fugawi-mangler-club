@@ -16,7 +16,7 @@ jobs:
         run: |
           mkdir ~/.kube
           echo "${{ steps.rebuild-k8s.outputs.kubeconfig }}" | base64 -d > ~/.kube/config
-          curl https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o ~/kubectl
+          wget https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
           chmod +x ~/kubectl
           ~/kubectl apply -f .
       # Update haproxy config on Proxy VM
