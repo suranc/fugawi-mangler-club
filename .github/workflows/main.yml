@@ -23,5 +23,5 @@ jobs:
       - name: Update haproxy config on proxy VM
         run: |
           mkdir ~/.ssh/
-          echo "${{ secrets.PROXY_PRIVATE_SSH_KEY }}" > ~/.ssh/.id_rsa
+          echo "${{ secrets.PROXY_PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
           ssh -i ~/.ssh/id_rsa -l root 144.126.246.248 "sed -i 's/server server1 .*/server server1 ${{ steps.rebuild-k8s.outputs.ingress-ip }}:${{ steps.rebuild-k8s.outputs.ingress-port }}/' /etc/haproxy/haproxy.cfg; systemctl restart haproxy"
