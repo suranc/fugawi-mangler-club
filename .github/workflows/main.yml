@@ -8,7 +8,7 @@ jobs:
       # Build or rebuild the k8s cluster and install the nginx ingress controller.  Taking default of 'us-south' for region and 'mycluster-free' for cluster name
       - name: Rebuild k8s cluster
         id: rebuild-k8s
-        uses: suranc/build-free-ibmcloud-k8s-cluster@master
+        uses: suranc/build-free-ibmcloud-k8s-cluster@v1.0.0
         with:
           ibmcloud-apikey: ${{ secrets.IBMCLOUD_APIKEY }}
       - name: Checkout Deployment Manifests
