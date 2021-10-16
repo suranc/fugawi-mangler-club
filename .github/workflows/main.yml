@@ -11,6 +11,8 @@ jobs:
         uses: suranc/build-free-ibmcloud-k8s-cluster@master
         with:
           ibmcloud-apikey: ${{ secrets.IBMCLOUD_APIKEY }}
+      - name: Checkout Deployment Manifests
+        uses: actions/checkout@v2
       # Apply the deployment yamls to the cluster
       - name: Deploy Fugawi Mangler Club
         run: |
