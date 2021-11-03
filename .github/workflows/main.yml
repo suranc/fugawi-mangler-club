@@ -33,4 +33,4 @@ jobs:
           mkdir ~/.ssh/
           echo "${{ secrets.PROXY_PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh -oStrictHostKeyChecking=no -i ~/.ssh/id_rsa -l root 3.140.214.185 "sed -i 's/server server1 .*/server server1 ${{ steps.rebuild-k8s.outputs.ingress-ip }}:${{ steps.rebuild-k8s.outputs.ingress-port }}/' /etc/haproxy/haproxy.cfg; systemctl restart haproxy"
+          ssh -oStrictHostKeyChecking=no -i ~/.ssh/id_rsa -l ec2-user 3.140.214.185 "sudo sed -i 's/server server1 .*/server server1 ${{ steps.rebuild-k8s.outputs.ingress-ip }}:${{ steps.rebuild-k8s.outputs.ingress-port }}/' /etc/haproxy/haproxy.cfg; sudo systemctl restart haproxy"
