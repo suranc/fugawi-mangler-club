@@ -2,7 +2,7 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     # Run every 29 days, at ~4AM
-    - cron:  '30 7 */29 * *'
+    - cron:  '30 11 */29 * *'
 
 jobs:
   rebuild_manglerheap_job:
