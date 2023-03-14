@@ -1,0 +1,39 @@
+pipeline:
+  name: Create Cluster and Deploy Mangler Club
+  identifier: Create_Cluster_and_Deploy_Mangler_Club
+  projectIdentifier: Hubot
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.suranc_Account_Level
+        repoName: fugawi-mangler-club
+        build: <+input>
+  stages:
+    - stage:
+        name: Create Cluster
+        identifier: Create_Cluster
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: alpine
+                    shell: Sh
+                    command: echo test
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: account.sacluster
+              namespace: chris-builds
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
