@@ -29,6 +29,16 @@ pipeline:
                     image: alpine
                     shell: Sh
                     command: echo test
+              - step:
+                  type: Plugin
+                  name: Plugin_1
+                  identifier: Plugin_1
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: plugins/github-actions
+                    settings:
+                      uses: suranc/example-action@master
+                      with: "{\"example-input\": \"testinputval\"}"
           infrastructure:
             type: KubernetesDirect
             spec:
