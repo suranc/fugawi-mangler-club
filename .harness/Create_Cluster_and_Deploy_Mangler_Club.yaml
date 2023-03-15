@@ -20,14 +20,6 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: Background
-                  name: Background_1
-                  identifier: Background_1
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: docker:dind
-                    shell: Sh
-              - step:
                   type: Run
                   name: Run_1
                   identifier: Run_1
@@ -43,6 +35,7 @@ pipeline:
                   spec:
                     connectorRef: account.harnessImage
                     image: plugins/github-actions
+                    privileged: true
                     settings:
                       uses: suranc/example-action@master
                       with: "{\"example-input\": \"testinputval\"}"
