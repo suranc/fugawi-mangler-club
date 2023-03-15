@@ -39,7 +39,6 @@ pipeline:
                     settings:
                       uses: suranc/example-action@master
                       with: "{\"example-input\": \"testinputval\"}"
-                      outputs: "{\"example-output\": \"outputvar\"}"
           infrastructure:
             type: KubernetesDirect
             spec:
