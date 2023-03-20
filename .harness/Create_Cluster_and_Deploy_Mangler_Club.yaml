@@ -12,8 +12,8 @@ pipeline:
         build: <+input>
   stages:
     - stage:
-        name: Create Cluster
-        identifier: Create_Cluster
+        name: Update Cluster
+        identifier: Update_Cluster
         type: CI
         spec:
           cloneCodebase: true
