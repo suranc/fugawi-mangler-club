@@ -12,6 +12,34 @@ pipeline:
         build: <+input>
   stages:
     - stage:
+        name: Create Cluster
+        identifier: Create_Cluster
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: TerraformApply
+                  name: Create Cluster
+                  identifier: Create_Cluster
+                  spec:
+                    configuration:
+                      type: Inline
+                      spec:
+                        configFiles:
+                          store:
+                            type: Github
+                            spec:
+                              gitFetchType: Branch
+                              connectorRef: account.suranc_Account_Level
+                              repoName: ibmcloud-terraform-example
+                              branch: master
+                              folderPath: .
+                    provisionerIdentifier: ibmcloud_cluster
+                  timeout: 10m
+        tags: {}
+    - stage:
         name: Update Cluster
         identifier: Update_Cluster
         type: CI
