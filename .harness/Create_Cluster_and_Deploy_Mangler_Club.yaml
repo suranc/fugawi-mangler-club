@@ -103,7 +103,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
-                      ibmcloud ks cluster config -c harness-cluster --output yaml > kubeconfig.yaml
+                      ibmcloud ks cluster config -c harness-cluster --output yaml > /tmp/kubeconfig.yaml
               - step:
                   type: Run
                   name: Apply Static Site Deployments
@@ -113,8 +113,17 @@ pipeline:
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
                     command: |-
-                      export KUBECONFIG=$(readlink -f kubeconfig.yaml)
+                      export KUBECONFIG=/tmp/kubeconfig.yaml
                       kubectl apply -f .
+              - step:
+                  type: Run
+                  name: Apply GitOps Resources to Rehydrate Cluster
+                  identifier: Apply_GitOps_Resources_to_Rehydrate_Cluster
+                  spec:
+                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                    image: ghcr.io/suranc/ibmcloud-cli
+                    shell: Sh
+                    command: echo apply gitops configs 1 then 2 then 3
           infrastructure:
             type: KubernetesDirect
             spec:
