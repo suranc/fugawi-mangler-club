@@ -20,6 +20,37 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: TerraformDestroy
+                  name: Destroy Existing Cluster
+                  identifier: Destroy_Existing_Cluster
+                  spec:
+                    provisionerIdentifier: ibmcloud_cluster
+                    configuration:
+                      type: Inline
+                      spec:
+                        configFiles:
+                          store:
+                            spec:
+                              connectorRef: account.suranc_Account_Level
+                              repoName: ibmcloud-free-cluster-terraform
+                              gitFetchType: Branch
+                              branch: master
+                              folderPath: .
+                            type: Github
+                        varFiles:
+                          - varFile:
+                              spec:
+                                content: ibmcloud_api_key = "<+secrets.getValue("ibmCloudKey")>"
+                              identifier: ibmcloud_api_key
+                              type: Inline
+                  timeout: 10m
+              - step:
+                  type: Wait
+                  name: Wait 10 Minutes for Delete to Settle
+                  identifier: Wait_10_Minutes_for_Delete_to_Settle
+                  spec:
+                    duration: 10m
+              - step:
                   type: TerraformApply
                   name: Create Cluster
                   identifier: Create_Cluster
@@ -33,7 +64,7 @@ pipeline:
                             spec:
                               gitFetchType: Branch
                               connectorRef: account.suranc_Account_Level
-                              repoName: ibmcloud-terraform-example
+                              repoName: ibmcloud-free-cluster-terraform
                               branch: master
                               folderPath: .
                         varFiles:
