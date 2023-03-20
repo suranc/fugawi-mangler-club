@@ -106,6 +106,33 @@ pipeline:
                       ibmcloud ks cluster config -c harness-cluster --output yaml > /tmp/kubeconfig.yaml
               - step:
                   type: Run
+                  name: Create nginx Ingress Controller
+                  identifier: Create_nginx_Ingress_Controller
+                  spec:
+                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                    image: ghcr.io/suranc/ibmcloud-cli
+                    shell: Sh
+                    command: |-
+                      export KUBECONFIG=/tmp/kubeconfig.yaml
+
+                      # Install nginx ingress controller
+                      kubectl create ns ingress-nginx
+                      helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+                      helm repo update
+                      helm -n ingress-nginx install ingress-nginx ingress-nginx/ingress-nginx
+
+                      # Block until nginx ingress controller is ready
+                      sleep 1
+                      kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+
+                      # Get the IP address and port of the ingress service, and output to the github action
+                      INGRESS_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses}' | jq -r '.[] | select(.type=="ExternalIP").address')
+                      INGRESS_PORT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.spec.ports}' | jq -r '.[] | select(.appProtocol=="http").nodePort')
+                    outputVariables:
+                      - name: INGRESS_IP
+                      - name: INGRESS_PORT
+              - step:
+                  type: Run
                   name: Apply Static Site Deployments
                   identifier: Apply_Static_Site_Deployments
                   spec:
