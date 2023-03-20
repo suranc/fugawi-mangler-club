@@ -101,10 +101,20 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
-                    command: |
+                    command: |-
                       ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
                       ibmcloud ks cluster config -c harness-cluster --output yaml > kubeconfig.yaml
-                      md5sum kubeconfig.yaml
+              - step:
+                  type: Run
+                  name: Apply Static Site Deployments
+                  identifier: Apply_Static_Site_Deployments
+                  spec:
+                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                    image: ghcr.io/suranc/ibmcloud-cli
+                    shell: Sh
+                    command: |-
+                      export KUBECONFIG=$(readlink -f kubeconfig.yaml)
+                      kubectl apply -f .
           infrastructure:
             type: KubernetesDirect
             spec:
