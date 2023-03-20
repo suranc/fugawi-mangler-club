@@ -75,3 +75,6 @@ pipeline:
               automountServiceAccountToken: true
               nodeSelector: {}
               os: Linux
+        when:
+          pipelineStatus: Success
+          condition: "false"
