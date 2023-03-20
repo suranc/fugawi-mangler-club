@@ -39,7 +39,7 @@ pipeline:
                         varFiles:
                           - varFile:
                               spec:
-                                content: ibmcloud_api_key = "0HHPaqw6xVXEgiT7E3iADweH8bQR7wqxYSMAi0r1PlhY"
+                                content: ibmcloud_api_key = "<+secrets.getValue("ibmCloudKey")>"
                               identifier: ibmcloud_create_cluster_api_key
                               type: Inline
                     provisionerIdentifier: ibmcloud_cluster
