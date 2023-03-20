@@ -124,6 +124,15 @@ pipeline:
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
                     command: echo apply gitops configs 1 then 2 then 3
+              - step:
+                  type: Run
+                  name: Get Public IP for node
+                  identifier: Get_Public_IP_for_node
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: alpine
+                    shell: Sh
+                    command: echo test
           infrastructure:
             type: KubernetesDirect
             spec:
@@ -134,3 +143,26 @@ pipeline:
               os: Linux
         when:
           pipelineStatus: Success
+    - stage:
+        name: Update haproxy
+        identifier: Update_haproxy
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Update haproxy Server to Point to New Cluster
+                  identifier: Update_haproxy_Server_to_Point_to_New_Cluster
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: echo stub
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+        tags: {}
