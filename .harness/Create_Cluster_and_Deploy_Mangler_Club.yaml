@@ -75,7 +75,16 @@ pipeline:
                               type: Inline
                     provisionerIdentifier: ibmcloud_cluster
                   timeout: 10m
+              - step:
+                  type: Wait
+                  name: Wait 15 Minutes for Cluster Creation to Settle
+                  identifier: Wait_15_Minutes_for_Cluster_Creation_to_Settle
+                  spec:
+                    duration: 15m
         tags: {}
+        when:
+          pipelineStatus: Success
+          condition: "false"
     - stage:
         name: Update Cluster
         identifier: Update_Cluster
@@ -86,24 +95,16 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Run_1
+                  name: Log in to Cluster and get kubeconfig
                   identifier: Run_1
                   spec:
                     connectorRef: account.harnessImage
-                    image: alpine
+                    image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
-                    command: echo test
-              - step:
-                  type: Plugin
-                  name: Plugin_1
-                  identifier: Plugin_1
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: plugins/github-actions
-                    privileged: true
-                    settings:
-                      uses: suranc/example-action@master
-                      with: "{\"example-input\": \"testinputval\"}"
+                    command: |
+                      ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
+                      ibmcloud ks cluster config -c harness-cluster --output yaml > kubeconfig.yaml
+                      md5sum kubeconfig.yaml
           infrastructure:
             type: KubernetesDirect
             spec:
@@ -114,4 +115,3 @@ pipeline:
               os: Linux
         when:
           pipelineStatus: Success
-          condition: "false"
