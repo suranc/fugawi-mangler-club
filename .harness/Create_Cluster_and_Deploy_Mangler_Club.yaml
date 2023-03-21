@@ -102,7 +102,7 @@ pipeline:
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
                     command: |-
-                      ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
+                      ibmcloud login --check-version=false --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
                       ibmcloud ks cluster config -c harness-cluster --output yaml > /harness-shared/kubeconfig.yaml
               - step:
                   type: Run
