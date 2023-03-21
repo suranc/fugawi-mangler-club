@@ -103,7 +103,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
-                      ibmcloud ks cluster config -c harness-cluster --output yaml > /tmp/kubeconfig.yaml
+                      ibmcloud ks cluster config -c harness-cluster --output yaml > /harness-shared/kubeconfig.yaml
               - step:
                   type: Run
                   name: Create nginx Ingress Controller
@@ -113,7 +113,7 @@ pipeline:
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
                     command: |-
-                      export KUBECONFIG=/tmp/kubeconfig.yaml
+                      export KUBECONFIG=/harness-shared/kubeconfig.yaml
 
                       # Install nginx ingress controller
                       kubectl create ns ingress-nginx
@@ -140,7 +140,7 @@ pipeline:
                     image: ghcr.io/suranc/ibmcloud-cli
                     shell: Sh
                     command: |-
-                      export KUBECONFIG=/tmp/kubeconfig.yaml
+                      export KUBECONFIG=/harness-shared/kubeconfig.yaml
                       kubectl apply -f .
               - step:
                   type: Run
@@ -168,6 +168,8 @@ pipeline:
               automountServiceAccountToken: true
               nodeSelector: {}
               os: Linux
+          sharedPaths:
+            - /harness-shared
         when:
           pipelineStatus: Success
     - stage:
