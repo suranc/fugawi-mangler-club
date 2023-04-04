@@ -120,7 +120,7 @@ pipeline:
                       kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply -f -
                       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
                       helm repo update
-                      helm -n ingress-nginx install ingress-nginx ingress-nginx/ingress-nginx
+                      helm -n ingress-nginx upgrade -i ingress-nginx ingress-nginx/ingress-nginx
 
                       # Block until nginx ingress controller is ready
                       sleep 1
