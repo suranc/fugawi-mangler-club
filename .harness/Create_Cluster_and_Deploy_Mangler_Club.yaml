@@ -105,62 +105,76 @@ pipeline:
                       ibmcloud config --check-version=false
                       ibmcloud login --apikey "<+secrets.getValue("ibmCloudKey")>" -r us-south
                       ibmcloud ks cluster config -c harness-cluster --output yaml > /harness-shared/kubeconfig.yaml
-              - step:
-                  type: Run
-                  name: Create nginx Ingress Controller
-                  identifier: Create_nginx_Ingress_Controller
-                  spec:
-                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
-                    image: ghcr.io/suranc/ibmcloud-cli
-                    shell: Sh
-                    command: |-
-                      export KUBECONFIG=/harness-shared/kubeconfig.yaml
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Create nginx Ingress Controller
+                      identifier: Create_nginx_Ingress_Controller
+                      spec:
+                        connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                        image: ghcr.io/suranc/ibmcloud-cli
+                        shell: Sh
+                        command: |-
+                          export KUBECONFIG=/harness-shared/kubeconfig.yaml
 
-                      # Install nginx ingress controller
-                      kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply -f -
-                      helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-                      helm repo update
-                      helm -n ingress-nginx upgrade -i ingress-nginx ingress-nginx/ingress-nginx
+                          # Install nginx ingress controller
+                          kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply -f -
+                          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+                          helm repo update
+                          helm -n ingress-nginx upgrade -i ingress-nginx ingress-nginx/ingress-nginx
 
-                      # Block until nginx ingress controller is ready
-                      sleep 1
-                      kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+                          # Block until nginx ingress controller is ready
+                          sleep 1
+                          kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
 
-                      # Get the IP address and port of the ingress service, and output to the github action
-                      INGRESS_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
-                      INGRESS_PORT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
-                    outputVariables:
-                      - name: INGRESS_IP
-                      - name: INGRESS_PORT
-              - step:
-                  type: Run
-                  name: Apply Static Site Deployments
-                  identifier: Apply_Static_Site_Deployments
-                  spec:
-                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
-                    image: ghcr.io/suranc/ibmcloud-cli
-                    shell: Sh
-                    command: |-
-                      export KUBECONFIG=/harness-shared/kubeconfig.yaml
-                      kubectl apply -f .
-              - step:
-                  type: Run
-                  name: Apply GitOps Resources to Rehydrate Cluster
-                  identifier: Apply_GitOps_Resources_to_Rehydrate_Cluster
-                  spec:
-                    connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
-                    image: ghcr.io/suranc/ibmcloud-cli
-                    shell: Sh
-                    command: echo apply gitops configs 1 then 2 then 3
-              - step:
-                  type: Run
-                  name: Get Public IP for node
-                  identifier: Get_Public_IP_for_node
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: alpine
-                    shell: Sh
-                    command: echo test
+                          # Get the IP address and port of the ingress service, and output to the github action
+                          INGRESS_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+                          INGRESS_PORT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
+                        outputVariables:
+                          - name: INGRESS_IP
+                          - name: INGRESS_PORT
+                  - step:
+                      type: Run
+                      name: Get Public IP for node
+                      identifier: Get_Public_IP_for_node
+                      spec:
+                        connectorRef: account.harnessImage
+                        image: alpine
+                        shell: Sh
+                        command: echo test
+                  - step:
+                      type: GitClone
+                      name: Clone Mangler Club GitOps Repo
+                      identifier: Clone_Mangler_Club_GitOps_Repo
+                      spec:
+                        connectorRef: account.suranc_Account_Level
+                        repoName: fugawi-mangler-club-gitops
+                        cloneDirectory: /fugawi-mangler-club-gitops
+                        build:
+                          type: branch
+                          spec:
+                            branch: master
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Apply Static Site Deployments
+                      identifier: Apply_Static_Site_Deployments
+                      spec:
+                        connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                        image: ghcr.io/suranc/ibmcloud-cli
+                        shell: Sh
+                        command: |-
+                          export KUBECONFIG=/harness-shared/kubeconfig.yaml
+                          kubectl apply -f .
+                  - step:
+                      type: Run
+                      name: Apply GitOps Resources to Rehydrate Cluster
+                      identifier: Apply_GitOps_Resources_to_Rehydrate_Cluster
+                      spec:
+                        connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
+                        image: ghcr.io/suranc/ibmcloud-cli
+                        shell: Sh
+                        command: "cd /fugawi-mangler-club-gitops\nfor layer in {1..3}\ndo\n\tfor file in `ls base-resources/$layer-*`; do kubectl apply -f $file; done\ndone\n"
           infrastructure:
             type: KubernetesDirect
             spec:
@@ -171,6 +185,7 @@ pipeline:
               os: Linux
           sharedPaths:
             - /harness-shared
+            - /fugawi-mangler-club-gitops
         when:
           pipelineStatus: Success
     - stage:
