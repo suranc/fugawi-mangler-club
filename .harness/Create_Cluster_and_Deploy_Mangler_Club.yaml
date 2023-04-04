@@ -188,6 +188,7 @@ pipeline:
             - /fugawi-mangler-club-gitops
         when:
           pipelineStatus: Success
+          condition: "false"
     - stage:
         name: Update haproxy
         identifier: Update_haproxy
@@ -202,12 +203,18 @@ pipeline:
                   identifier: Update_haproxy_Server_to_Point_to_New_Cluster
                   spec:
                     shell: Bash
-                    onDelegate: true
+                    onDelegate: false
                     source:
                       type: Inline
                       spec:
-                        script: echo stub
+                        script: |-
+                          sudo sed -i 's/server server1 .*/server server1 150.238.134.114:31244/' /etc/haproxy/haproxy.cfg
+                          sudo systemctl restart haproxy
                     environmentVariables: []
                     outputVariables: []
+                    executionTarget:
+                      connectorRef: oraclevmsshcred
+                      host: 132.226.58.170
+                      workingDirectory: /tmp
                   timeout: 10m
         tags: {}
