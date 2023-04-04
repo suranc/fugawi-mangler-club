@@ -127,8 +127,8 @@ pipeline:
                       kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
 
                       # Get the IP address and port of the ingress service, and output to the github action
-                      INGRESS_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses}' | jq -r '.[] | select(.type=="ExternalIP").address')
-                      INGRESS_PORT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.spec.ports}' | jq -r '.[] | select(.appProtocol=="http").nodePort')
+                      INGRESS_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+                      INGRESS_PORT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
                     outputVariables:
                       - name: INGRESS_IP
                       - name: INGRESS_PORT
