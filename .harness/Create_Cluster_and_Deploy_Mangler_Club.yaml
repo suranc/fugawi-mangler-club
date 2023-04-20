@@ -84,7 +84,6 @@ pipeline:
         tags: {}
         when:
           pipelineStatus: Success
-          condition: "false"
     - stage:
         name: Update Cluster
         identifier: Update_Cluster
@@ -188,7 +187,6 @@ pipeline:
             - /fugawi-mangler-club-gitops
         when:
           pipelineStatus: Success
-          condition: "false"
     - stage:
         name: Update haproxy
         identifier: Update_haproxy
