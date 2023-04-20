@@ -174,7 +174,7 @@ pipeline:
                         connectorRef: account.Account_Level_suranc_GitHub_Docker_Registry
                         image: ghcr.io/suranc/ibmcloud-cli
                         shell: Bash
-                        command: "cd /fugawi-mangler-club-gitops\nfor layer in {1..3}\ndo\n\tfor file in `ls base-resources/$layer-*`; do kubectl apply -f $file; done\ndone\n"
+                        command: "export KUBECONFIG=/harness-shared/kubeconfig.yaml\n\ncd /fugawi-mangler-club-gitops\nfor layer in {1..3}\ndo\n\tfor file in `ls base-resources/$layer-*`; do kubectl apply -f $file; done\ndone\n"
           infrastructure:
             type: KubernetesDirect
             spec:
