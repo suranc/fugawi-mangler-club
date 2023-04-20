@@ -43,7 +43,7 @@ pipeline:
                                 content: ibmcloud_api_key = "<+secrets.getValue("ibmCloudKey")>"
                               identifier: ibmcloud_api_key
                               type: Inline
-                  timeout: 10m
+                  timeout: 15m
               - step:
                   type: Wait
                   name: Wait 10 Minutes for Delete to Settle
@@ -74,7 +74,7 @@ pipeline:
                               identifier: ibmcloud_create_cluster_api_key
                               type: Inline
                     provisionerIdentifier: ibmcloud_cluster
-                  timeout: 10m
+                  timeout: 30m
               - step:
                   type: Wait
                   name: Wait 15 Minutes for Cluster Creation to Settle
