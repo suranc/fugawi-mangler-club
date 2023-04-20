@@ -84,6 +84,7 @@ pipeline:
         tags: {}
         when:
           pipelineStatus: Success
+          condition: "false"
     - stage:
         name: Update Cluster
         identifier: Update_Cluster
