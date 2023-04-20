@@ -134,15 +134,6 @@ pipeline:
                           - name: INGRESS_IP
                           - name: INGRESS_PORT
                   - step:
-                      type: Run
-                      name: Get Public IP for node
-                      identifier: Get_Public_IP_for_node
-                      spec:
-                        connectorRef: account.harnessImage
-                        image: alpine
-                        shell: Sh
-                        command: echo test
-                  - step:
                       type: GitClone
                       name: Clone Mangler Club GitOps Repo
                       identifier: Clone_Mangler_Club_GitOps_Repo
@@ -207,7 +198,7 @@ pipeline:
                       type: Inline
                       spec:
                         script: |-
-                          sudo sed -i 's/server server1 .*/server server1 150.238.134.114:31244/' /etc/haproxy/haproxy.cfg
+                          sudo sed -i 's/server server1 .*/server server1 <+pipeline.stages.Update_Cluster.spec.execution.steps.Create_nginx_Ingress_Controller.output.outputVariables.INGRESS_IP>:<+pipeline.stages.Update_Cluster.spec.execution.steps.Create_nginx_Ingress_Controller.output.outputVariables.INGRESS_PORT>/' /etc/haproxy/haproxy.cfg
                           sudo systemctl restart haproxy
                     environmentVariables: []
                     outputVariables: []
