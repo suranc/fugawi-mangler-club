@@ -77,10 +77,10 @@ pipeline:
                   timeout: 30m
               - step:
                   type: Wait
-                  name: Wait 15 Minutes for Cluster Creation to Settle
+                  name: Wait 10 Minutes for Cluster Creation to Settle
                   identifier: Wait_15_Minutes_for_Cluster_Creation_to_Settle
                   spec:
-                    duration: 15m
+                    duration: 10m
         tags: {}
         when:
           pipelineStatus: Success
